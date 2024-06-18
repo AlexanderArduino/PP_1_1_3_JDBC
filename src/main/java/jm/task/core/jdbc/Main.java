@@ -10,13 +10,15 @@ public class Main {
 
 
         UserService us = new UserServiceImpl();
-        us.dropUsersTable();
-        us.createUsersTable();
+//        us.dropUsersTable();
+//        us.createUsersTable();
         us.saveUser("Vasya", "Pupkin", (byte)28);
         us.saveUser("Petya", "Pechkin", (byte)34);
         us.saveUser("Kolya", "Nikonov", (byte)17);
         us.saveUser("Dima", "Grachev", (byte)8);
 
+        System.out.println(us.getAllUsers());
 
+        us.cleanUsersTable();
     }
 }

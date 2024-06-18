@@ -4,13 +4,15 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
     public void createUsersTable() {
-        String tableName = "`Users`";
+        String tableName = "users";
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("CREATE TABLE IF NOT EXISTS ")
                 .append(tableName).append(" (")
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
         try (Connection conn = Util.getConnection()){
             Statement st =conn.createStatement();
             st.execute(stringBuilder.toString());
-            System.out.printf("\nТаблица %s была создана", "new_table");
+            System.out.printf("\nТаблица %s была создана", tableName);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -38,11 +40,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public void dropUsersTable() {
-       String dropUsersTable = "DROP TABLE IF EXISTS `Users`;";
+        String tableName = "users";
+        String dropUsersTable = "DROP TABLE IF EXISTS " + tableName + ";";
 
         try (Connection conn = Util.getConnection()) {
             Statement st =conn.createStatement();
             st.execute(dropUsersTable);
+            System.out.println("\nТаблица " + tableName + " была удалена");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +58,6 @@ public class UserServiceImpl implements UserService {
                         .append("\"").append(name).append("\", ")
                         .append("\"").append(lastName).append("\", ")
                         .append(age).append(");");
-        System.out.println(stringBuilder);
 //        stringBuilder.append("INSERT INTO `users` (`name`, `lastName`, `age`) VALUES ('Gosha', 'Pechkin', '20');");
         try (Connection conn = Util.getConnection()){
             Statement st =conn.createStatement();
@@ -66,14 +69,42 @@ public class UserServiceImpl implements UserService {
     }
 
     public void removeUserById(long id) {
-
+        String query = "DELETE FROM `users` WHERE id = " + id + ";";
+        try (Connection connection = Util.getConnection(); Statement statement = connection.createStatement()) {
+            statement.execute(query);
+            System.out.println("\nПользователь с id = " + id + " был удален");
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<User> getAllUsers() {
-        return null;
+        List<User> userList = new ArrayList<>();
+        String query = "select * FROM `users`;";
+
+        try (Connection conn = Util.getConnection(); Statement statement = conn.createStatement()){
+            ResultSet resultSet = statement.executeQuery(query);
+            while(resultSet.next()) {
+                User user = new User();
+                user.setId((long)resultSet.getInt(1));
+                user.setName(resultSet.getString(2));
+                user.setLastName(resultSet.getString(3));
+                user.setAge((byte)resultSet.getInt(4));
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userList;
     }
 
     public void cleanUsersTable() {
-
+        String query = "TRUNCATE TABLE users";
+        try (Connection connection = Util.getConnection(); Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+            System.out.println("\nТаблица users была полностью очищена");
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

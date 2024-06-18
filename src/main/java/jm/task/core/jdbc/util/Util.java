@@ -30,7 +30,7 @@ public class Util {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-            System.out.printf("Connection to  %s opened", DB_URL);
+            System.out.printf("\nConnection to  %s opened", DB_URL);
         } catch (SQLException e) {
             throw new RuntimeException("Не удалось подключиться к БД");
         }

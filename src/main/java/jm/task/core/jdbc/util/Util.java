@@ -22,7 +22,7 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class Util {
-    public static final String DB_URL = "jdbc:mysql://localhost:3306/database";
+    public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/database";
     public static final String DB_USER = "root";
     public static final String DB_PASS = "root";
 
